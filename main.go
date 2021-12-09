@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"opa-echo-test/controller"
 	"opa-echo-test/domain/entity"
+	"opa-echo-test/infrastructure/echo/emiddleware"
 	"opa-echo-test/infrastructure/rbac"
 	"opa-echo-test/infrastructure/sqlite"
 	"opa-echo-test/infrastructure/sqlite/repository"
 	"opa-echo-test/internal/chk"
-	"opa-echo-test/internal/echo/emiddleware"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
