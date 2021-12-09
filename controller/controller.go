@@ -20,3 +20,8 @@ func AppsGet(ctx echo.Context) error {
 func AppsPost(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, "POST /apps")
 }
+
+// AppsDetailGet .
+func AppDetailGet(ctx echo.Context) error {
+	return ctx.JSON(http.StatusOK, "GET /apps/:id")
+}

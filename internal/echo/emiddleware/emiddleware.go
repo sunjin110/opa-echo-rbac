@@ -15,19 +15,18 @@ func Authorization(next echo.HandlerFunc) echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 
-		// Authorization
+		// JWTからユーザーを識別できるIDを取得しているということを仮定する
 
 		// TODO ユーザーの権限をDBから取得する
 
-		log.Println("path is ", jsonutil.Marshal(c.Request().URL.Path))
-
+		// RBACの評価inputを作成
 		input := rbac.Input{
 			User:              "user",
 			Roles:             []string{"read-only"},
 			AllowResourceList: []string{"test-app"},
 
 			Method:         c.Request().Method, // GET,POST,PUT,DELETE
-			Path:           c.Request().URL.Path,
+			Path:           c.Path(),
 			AccessResource: "test-app", // これは、pathから頑張って取得する必要がある
 		}
 

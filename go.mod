@@ -5,7 +5,10 @@ go 1.17
 require (
 	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
 	github.com/labstack/echo/v4 v4.6.1
+	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/open-policy-agent/opa v0.35.0
+	gorm.io/driver/sqlite v1.2.6
+	gorm.io/gorm v1.22.4
 )
 
 require (
@@ -13,6 +16,8 @@ require (
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.3 // indirect
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
