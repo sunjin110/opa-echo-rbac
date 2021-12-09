@@ -39,32 +39,6 @@ func getCompiler(fileName string) *ast.Compiler {
 	return compilerMap[fileName]
 }
 
-// // Input
-// type Input struct {
-// 	User              string   `opa:"user" json:"user"`                       // user名
-// 	Roles             []string `opa:"roles" json:"roles"`                     // 所持しているrole
-// 	AllowResourceList []string `opa:"allow_resources" json:"allow_resources"` // 許可されているresource 正規表現も可
-
-// 	Method         string `opa:"method" json:"method"`                   // 今回アクセスするmethod
-// 	Path           string `opa:"path" json:"path"`                       // 今回アクセスするpath
-// 	AccessResource string `opa:"access_resource" json:"access_resource"` // 今回アクセスするresource
-// }
-
-// Eval query = "data.rbac.authz.allow"
-// func Eval(ctx context.Context, fileName string, query string, input interface{}) bool {
-
-// 	r := rego.New(
-// 		rego.Query(query),
-// 		rego.Compiler(compiler),
-// 		rego.Input(input),
-// 	)
-
-// 	rs, err := r.Eval(ctx)
-// 	chk.SE(err)
-
-// 	return rs.Allowed()
-// }
-
 // EvalAllowed .
 func EvalAllowed(ctx context.Context, fileName string, query string, input interface{}, s storage.Store) bool {
 

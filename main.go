@@ -3,7 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"net/http"
+	"opa-echo-test/controller"
 	"opa-echo-test/infrastructure/rbac"
 	"opa-echo-test/internal/chk"
 	"opa-echo-test/internal/echo/emiddleware"
@@ -32,9 +32,9 @@ func serve() {
 
 	e.Use(emiddleware.Authorization)
 
-	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "hello world")
-	})
+	e.GET("", controller.IndexGet)
+	e.GET("/apps", controller.AppsGet)
+	e.POST("/apps", controller.AppsPost)
 
 	err := e.Start(":1234")
 	chk.SE(err)

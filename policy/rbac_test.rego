@@ -45,6 +45,19 @@ test_allow {
     }
 }
 
+# read-only権限で、postしようとした時にerrorになることを確認
+test_not_allow_post {
+    not allow with input as {
+        "user": "user_name",
+        "roles": ["read-only"],
+        "allow_resources": [".*"],
+
+        "method": "POST",
+        "path": "/apps",
+        "access_resource": "test"
+    }
+}
+
 test_allow_regex {
      allow with input as {
         # ユーザーの所持している権限情報

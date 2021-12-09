@@ -39,6 +39,9 @@ roles := { # can use regex
 # pathごとに、必要なaction権限を割り当てしていく
 # その権限を全て所持していないといけない
 path_permissions := {
+    "/": {
+        "GET": []
+    },
     "/login": {
         "GET": [],
         "POST": []
@@ -110,7 +113,7 @@ eval_resource_access = true {
 
 
     # 正規表現でresourceにアクセスできるかどうかを確認する
-    regex.match(allow_resource, input.access_resource)
+    regex.match(allow_resource, input.access_resource) == true
 }
 
 # 今回アクセスするpathが存在することを確認する
@@ -148,7 +151,8 @@ filter_user_actions[action] {
     user_actions[user_action]
 
     # 正規表現でのroleもサポートする
-    result := regex.match(user_action, require_action)
+    # matchしたらsetする
+    regex.match(user_action, require_action) == true
     action := require_action
 }
 

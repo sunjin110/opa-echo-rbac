@@ -81,6 +81,9 @@ roles := { # can use regex
 # pathごとに、必要なaction権限を割り当てしていく
 # その権限を全て所持していないといけない
 path_permissions := {
+	"/": {
+		"GET": []
+	},
     "/login": {
         "GET": [],
         "POST": []
