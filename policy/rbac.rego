@@ -1,5 +1,8 @@
 package rbac.authz
 
+# TODO 管理をシンプルにするために、Groupを作ってもいいかも
+# TODO 認可のロジックちょっと今のだと重いかもなので、改善する
+
 # input format
 # {
 #     "user": "user-name",
@@ -12,8 +15,6 @@ package rbac.authz
 
 
 # 固定のデータ
-
-# TODO 管理をシンプルにするために、Groupを作ってもいいかも
 
 # role
 roles := { # can use regex
@@ -125,9 +126,6 @@ eval_path_exists = true {
     path[input.method]
 }
 
-
-default allow = false
-
 # ユーザーができるactionをまとめる(sets)
 user_actions[action] {
     user_role := input.roles[_]
@@ -156,6 +154,8 @@ filter_user_actions[action] {
     action := require_action
 }
 
+# 認可
+default allow = false
 allow = true{
     eval_role_exists == true
     eval_resource_access == true
