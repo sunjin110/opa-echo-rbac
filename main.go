@@ -66,7 +66,7 @@ func setupTestData() {
 		UserID:       1,
 		Name:         "read-only-user",
 		RoleList:     []string{"read-only"},
-		ResourceList: []string{"test-app"},
+		ResourceList: []string{"test-app-1"},
 	}
 
 	adminUser := &entity.UserAuthInfo{
