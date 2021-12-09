@@ -29,6 +29,7 @@ func Setup(dbDir string, dbPath string) {
 	// migration
 	chk.SE(db.AutoMigrate(&repository.User{}))
 	chk.SE(db.AutoMigrate(&repository.UserRole{}))
+	chk.SE(db.AutoMigrate(&repository.UserAllowedResource{}))
 }
 
 func GetDB() *gorm.DB {

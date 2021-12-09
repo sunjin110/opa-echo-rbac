@@ -4,8 +4,10 @@ import (
 	_ "embed"
 	"fmt"
 	"opa-echo-test/controller"
+	"opa-echo-test/domain/entity"
 	"opa-echo-test/infrastructure/rbac"
 	"opa-echo-test/infrastructure/sqlite"
+	"opa-echo-test/infrastructure/sqlite/repository"
 	"opa-echo-test/internal/chk"
 	"opa-echo-test/internal/echo/emiddleware"
 
@@ -26,6 +28,10 @@ func main() {
 
 	// sqlite setup
 	sqlite.Setup(dbDir, dbPath)
+
+	// setup user
+	// テストするために、ユーザーデータを作成する
+	setupTestData()
 
 	// rbac setup
 	rbac.Setup(opaRbacModule)
@@ -48,4 +54,28 @@ func serve() {
 
 	err := e.Start(":1234")
 	chk.SE(err)
+}
+
+// テスト用のデータを作る
+func setupTestData() {
+
+	repo := repository.NewUserAuthInfoRepository(sqlite.GetDB())
+
+	// read-only
+	readOnlyUser := &entity.UserAuthInfo{
+		UserID:       1,
+		Name:         "read-only-user",
+		RoleList:     []string{"read-only"},
+		ResourceList: []string{"test-app"},
+	}
+
+	adminUser := &entity.UserAuthInfo{
+		UserID:       2,
+		Name:         "admin-user",
+		RoleList:     []string{"admin"},
+		ResourceList: []string{".*"},
+	}
+
+	repo.Insert(readOnlyUser)
+	repo.Insert(adminUser)
 }
