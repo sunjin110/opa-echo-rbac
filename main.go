@@ -1,8 +1,10 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"net/http"
+	"opa-echo-test/infrastructure/rbac"
 	"opa-echo-test/internal/chk"
 	"opa-echo-test/internal/echo/emiddleware"
 
@@ -10,9 +12,19 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+//go:embed policy/rbac.rego
+var opaRbacModule []byte
+
 func main() {
 	fmt.Println("opaを使用して、権限のアクセスがうまく動いていることを確認してみる、検証")
 
+	// rbac setup
+	rbac.Setup(opaRbacModule)
+
+	serve()
+}
+
+func serve() {
 	// echo
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -26,5 +38,4 @@ func main() {
 
 	err := e.Start(":1234")
 	chk.SE(err)
-
 }

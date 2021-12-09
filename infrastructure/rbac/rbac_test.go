@@ -1,16 +1,58 @@
-package rbac.authz
+package rbac_test
 
-# input format
-# input := {
-#     "user": "sunjin2",
-#     "roles": ["read-only"],
-#     "allow_resources": ["sunjin-app", "test-app"], # can use regex
-#     "method": "GET",
-#     "path": "/apps/:id/huwahuwa/campaigns",
-#     "access_resource": "sunjin-app"
-# }
+import (
+	"context"
+	"opa-echo-test/infrastructure/rbac"
+	"testing"
 
+	"github.com/franela/goblin"
+)
 
+// go test -v -count=1 -timeout 30s -run ^Test$ opa-echo-test/infrastructure/rbac
+
+func Test(t *testing.T) {
+
+	g := goblin.Goblin(t)
+
+	g.Describe("rbac:test", func() {
+
+		ctx := context.Background()
+
+		g.Before(func() {
+			rbac.Setup([]byte(module))
+		})
+
+		g.It("eval", func() {
+
+			input := rbac.Input{
+				User:              "test-user",
+				Roles:             []string{"read-only"},
+				AllowResourceList: []string{"test-app"},
+				Method:            "GET",
+				Path:              "/apps",
+				AccessResource:    "test-app",
+			}
+
+			allowed := rbac.Eval(ctx, input)
+			g.Assert(allowed).IsTrue()
+		})
+
+		g.It("eval_regex", func() {
+			input := rbac.Input{
+				User:              "test-user",
+				Roles:             []string{"admin"},
+				AllowResourceList: []string{".*"},
+				Method:            "GET",
+				Path:              "/apps",
+				AccessResource:    "test-app",
+			}
+			allowd := rbac.Eval(ctx, input)
+			g.Assert(allowd).IsTrue()
+		})
+	})
+}
+
+var module string = `package rbac.authz
 
 # 固定のデータ
 
@@ -160,3 +202,4 @@ allow = true{
     # 権限のcheck
     require_actions == filter_user_actions
 }
+`
