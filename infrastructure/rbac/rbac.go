@@ -23,10 +23,12 @@ type Input struct {
 	AccessResource string `opa:"access_resource" json:"access_resource"` // 今回アクセスするresource
 }
 
+// Setup .
 func Setup(modle []byte) {
 	opa.Setup(fileName, modle)
 }
 
+// Eval 評価
 func Eval(ctx context.Context, input Input) bool {
 	return opa.EvalAllowed(ctx, fileName, query, input, nil)
 }

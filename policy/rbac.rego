@@ -1,21 +1,21 @@
 package rbac.authz
 
 # input format
-# input := {
-#     "user": "sunjin2",
-#     "roles": ["read-only"],
-#     "allow_resources": ["sunjin-app", "test-app"], # can use regex
+# {
+#     "user": "user-name",
+#     "roles": ["read-only", "hogehoge"],
+#     "allow_resources": ["test-app", "test-app-v2"], # can use regex
 #     "method": "GET",
-#     "path": "/apps/:id/huwahuwa/campaigns",
-#     "access_resource": "sunjin-app"
+#     "path": "/apps",
+#     "access_resource": "test-app"
 # }
-
 
 
 # 固定のデータ
 
 # TODO 管理をシンプルにするために、Groupを作ってもいいかも
 
+# role
 roles := { # can use regex
     # 全ての権限を観覧できるrole
     "admin": [ 
