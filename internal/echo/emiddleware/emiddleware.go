@@ -1,11 +1,9 @@
 package emiddleware
 
 import (
-	"log"
 	"net/http"
 	"opa-echo-test/infrastructure/rbac"
 	"opa-echo-test/internal/chk"
-	"opa-echo-test/internal/jsonutil"
 
 	"github.com/labstack/echo/v4"
 )
@@ -30,15 +28,12 @@ func Authorization(next echo.HandlerFunc) echo.HandlerFunc {
 			AccessResource: "test-app", // これは、pathから頑張って取得する必要がある
 		}
 
-		log.Println("input is ", jsonutil.Marshal(input))
-
 		// 許可されていない場合は、403
 		if !rbac.Eval(c.Request().Context(), input) {
 			return c.JSON(http.StatusForbidden, "許可されていません")
 		}
 
-		err := next(c)
-		chk.SE(err)
+		chk.SE(next(c))
 
 		return nil
 	}
