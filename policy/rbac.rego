@@ -1,29 +1,16 @@
 package rbac.authz
 
-# inputのデータ
-input_1 := {
-    # ユーザーが所持している情報
-    "user": "sunjin",
-    "roles": ["admin"],
-    "allow_resources": ["*"], # このユーザーが観覧を許可されているresource
-
-    # 今回ユーザーがおこうアクション
-    "method": "PUT",
-    "path": "/apps/update/status",
-    "access_resource": "resource_1" # 今回アクセスしようとしているresource
-}
-
-input_2 := {
-    "user": "sunjin2",
-    "roles": ["read-only"],
-    "allow_resources": ["sunjin-app", "test-app"],
+# input format
+# input := {
+#     "user": "sunjin2",
+#     "roles": ["read-only"],
+#     "allow_resources": ["sunjin-app", "test-app"],
+#     "method": "GET",
+#     "path": "/apps/:id/huwahuwa/campaigns",
+#     "access_resource": "sunjin-app"
+# }
 
 
-    "method": "GET",
-    "path": "/apps/:id/huwahuwa/campaigns",
-    "access_resource": "sunjin-app"
-    
-}
 
 # 固定のデータ
 
@@ -32,22 +19,25 @@ input_2 := {
 roles := {
     # 全ての権限を観覧できるrole
     "admin": [ 
-        "*"
+        ".*"
     ],
     # 観覧権限のみ所持しているrole
     "read-only": [
         "apps:list",
+        "apps:list:2",
         "apps:detail",
         "huwahuwa:list",
         "hogehoge:list",
     ],
     # huwahuwa系の権限を全て所持しているユーザー
     "huwahuwa": [
-        "huwahuwa:*"
+        "huwahuwa:*",
+        "huwahuwa:list",
     ]
 }
 
 # pathごとに、必要なaction権限を割り当てしていく
+# その権限を全て所持していないといけない
 path_permissions := {
     "/login": {
         "GET": [],
@@ -57,7 +47,7 @@ path_permissions := {
         "GET": []
     },
     "/apps": {
-        "GET": ["apps:list"],
+        "GET": ["apps:list", "apps:list:2"],
         "POST": ["apps:create"],
         "PUT": ["apps:update"],
         "DELETE": ["apps:delete"],
@@ -104,29 +94,69 @@ actions := {
     ],
 }
 
-default allow = false
-allow {
-    # TODO
-    true
+# userのroleが存在することを確認する
+eval_role_exists = true {
+    # userのroleを一つずつ取得
+    user_role := input.roles[_]
+
+    # dataのroleに存在すればtrue
+    roles[user_role]
 }
 
-# # logic that implements RBAC
-# default allow = false
-# allow {
-#     # lookup the list of roles for the user
-#     # ユーザーの役割リストを検索
-#     roles := data.user_roles[input.user]
+# 今回アクセスするresourceに、ユーザーがアクセスする権限があるかどうかを確認
+eval_resource_access = true {
+    # userがアクセス可能なresoource
+    allow_resource := input.allow_resources[_]
 
-#     # for each role in that list
-#     # 役割ごとに検証
-#     r := roles[_]
 
-#     # 格roleのpermissionを調べる
-#     permissions := data.role_permissions[r]
+    # 正規表現でresourceにアクセスできるかどうかを確認する
+    regex.match(allow_resource, input.access_resource)
+}
 
-#     # permissionごとにチェック
-#     p := permissions[_]
+# 今回アクセスするpathが存在することを確認する
+eval_path_exists = true {
+    # pathがあることを確認
+    path := path_permissions[input.path]
 
-#     # 権限のcheck
-#     p == {"action": input.action, "object": input.object}
-# }
+    # methodがあるかどうか確認
+    path[input.method]
+}
+
+
+default allow = false
+
+# ユーザーができるactionをまとめる(sets)
+user_actions[action] {
+    user_role := input.roles[_]
+    user_actions := roles[user_role]
+    action := user_actions[_]
+}
+
+# 今回必要となるactionを取得する(sets)
+require_actions[action] {
+    path := path_permissions[input.path]
+    actions := path[input.method]
+    action := actions[_]
+}
+
+# 今回使うactionをuser_actionsから取得する
+filter_user_actions[action] {
+    require_action := require_actions[_]
+
+    # iter
+    some user_action
+    user_actions[user_action]
+
+    # 正規表現でのroleもサポートする
+    result := regex.match(user_action, require_action)
+    action := require_action
+}
+
+allow = true{
+    eval_role_exists == true
+    eval_resource_access == true
+    eval_path_exists == true
+
+    # 権限のcheck
+    require_actions == filter_user_actions
+}
