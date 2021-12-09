@@ -17,7 +17,7 @@ func Authorization(next echo.HandlerFunc) echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 
-		// JWTからユーザーを識別できるIDを取得しているということを仮定する
+		// JWTからユーザーを識別できるIDとaccessResourceを取得していると仮定する
 		userID := uint64(1)
 		accessResource := "test-app-1"
 

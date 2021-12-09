@@ -33,3 +33,7 @@ curl -X POST http://localhost:1234/apps
 
 
 ```
+
+# Open Policy Agentを使った感想
+ - rego言語の実装は辛いけど、慣れたら楽?
+ - 権限周りを、別でテストできるのがとてもいい！(rbac_test.rego)
