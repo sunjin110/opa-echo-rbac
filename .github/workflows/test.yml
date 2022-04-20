@@ -1,0 +1,20 @@
+name: test
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v2
+      - name: git-tag
+        id: git-tag
+        run: |
+          echo ::set-output name=SOURCE_TAG:${GITHUB_REF#refs/tags/}
+      - name: run
+        run: |
+          echo ${{ steps.git-tag.outputs.SOURCE_TAG }}
